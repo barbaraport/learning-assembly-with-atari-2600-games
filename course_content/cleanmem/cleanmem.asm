@@ -11,7 +11,7 @@ Start:
 
 ; clear the page zero region ($00 to $FF)
 ; meaning the entire ram and also the entire TIA registers
-
+S
 	lda #0 ; A register = 0
 	ldx #$FF ; X register = #$FF
 
@@ -19,6 +19,8 @@ MemLoop:
 	sta $0,X ; store the value of A register inside memory address $0 + X
 	dex ; X--
 	bne MemLoop ; Loop until X register is equal to zero (z-flag is set)
+
+	sta $00 ; clears the $00 memory address
 
 ; close the rom and size it to exactly 4KB
 
