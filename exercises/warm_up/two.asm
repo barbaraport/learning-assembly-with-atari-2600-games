@@ -1,6 +1,7 @@
     processor 6502
     seg Code
     org $F000
+    
 Start:
     lda #$A
     ldx #%11111111
