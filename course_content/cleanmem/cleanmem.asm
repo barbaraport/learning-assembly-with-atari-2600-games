@@ -11,7 +11,7 @@ Start:
 
 ; clear the page zero region ($00 to $FF)
 ; meaning the entire ram and also the entire TIA registers
-S
+
 	lda #0 ; A register = 0
 	ldx #$FF ; X register = #$FF
 
