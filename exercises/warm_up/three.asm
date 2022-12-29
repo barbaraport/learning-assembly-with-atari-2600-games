@@ -3,13 +3,20 @@
     org $F000
 Start:
     lda #15
-    mov a, x
-    mov a, y
-    mov x, a
-    mov y, a
+    
+    tax
+    tay
+    txa
+    tya
 
     ldx #6
-    mov x, y
+    
+    txa
+    tay
+    
+    ; there's no direct transfer between X and Y in 6502
+    
+    jmp Start
 
     org $FFFC
     .word Start
