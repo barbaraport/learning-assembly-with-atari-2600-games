@@ -11,6 +11,8 @@ Start:
     sec ; always set the carry flag before sbc
     sbc #10
 
+    jmp Start
+
     org $FFFC
     .word Start
     .word Start
