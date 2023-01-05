@@ -57,7 +57,6 @@ StartFrame:
     ldx #%11111111
     stx PF1
     stx PF2
-    
     repeat 7
         sta WSYNC
     repend
@@ -66,6 +65,7 @@ StartFrame:
     stx PF0
     ldx #0
     stx PF1
+    ldx #%10000000
     stx PF2
     repeat 164
         sta WSYNC
@@ -100,7 +100,6 @@ StartFrame:
     
     
     jmp StartFrame
-        
 
 
     org $FFFC
