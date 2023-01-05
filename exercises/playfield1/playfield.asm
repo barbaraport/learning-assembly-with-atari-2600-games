@@ -3,7 +3,7 @@
     include "vcs.h"
     include "macro.h"
     
-    seg
+    seg Code
     org $f000
 
 Reset:
