@@ -4,7 +4,7 @@
     include "macro.h"
     
     seg Code
-    org $f000
+    org $F000
 
 Reset:
     CLEAN_START
@@ -104,6 +104,6 @@ StartFrame:
         
 
 
-    org $fffc
+    org $FFFC
     .word Reset
     .word Reset
