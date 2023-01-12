@@ -22,6 +22,9 @@ Start:
     lda #$C6
     sta COLUP1
 
+    lda #%00000010
+    sta CTRLPF
+
 Frame:
 
     lda #2 ; turning on v-sync and v-blank
