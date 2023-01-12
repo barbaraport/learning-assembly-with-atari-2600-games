@@ -3,6 +3,16 @@
     include "vcs.h"
     include "macro.h"
     
+; segment to declare variables
+    seg.u Variables
+    
+    org $80
+    
+P0Height ds 1 ; 1 byte for player 0 height
+P1Height ds 1 ; 1 byte for player 1 height
+
+;;;;;;;;
+    
     seg Code
     
     org $F000
@@ -24,6 +34,10 @@ Start:
 
     lda #%00000010
     sta CTRLPF
+    
+    lda #10 ; A = 10
+    sta P0Height ; P0Height = 10
+    sta P1Height ; P1Height = 10
 
 Frame:
 
@@ -74,7 +88,7 @@ Player0Loop:
     sta GRP0
     sta WSYNC
     iny
-    cpy #10
+    cpy P0Height
     bne Player0Loop
     
     lda #0
@@ -86,7 +100,7 @@ Player1Loop:
     sta GRP1
     sta WSYNC
     iny
-    cpy #10
+    cpy P0Height
     bne Player1Loop
     
     lda #0
