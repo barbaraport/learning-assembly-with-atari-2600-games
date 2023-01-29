@@ -15,6 +15,7 @@ JetColorPointer word
 BomberSpritePointer word
 BomberColorPointer word
 JetAnimationOffset byte
+Random byte
 
 JET_HEIGHT = 9
 BOMBER_HEIGHT = 9
@@ -27,12 +28,14 @@ Reset:
 
 	lda #10
         sta JetYPos
-        lda #60
+        lda #68
         sta JetXPos
         lda #83
         sta BomberYPos
-        lda #54
+        lda #63
         sta BomberXPos
+        lda #%11010100
+        sta Random
         
         lda #<JetSprite
         sta JetSpritePointer
@@ -131,18 +134,18 @@ GameVisibleLines:
         sta GRP1
         lda (BomberColorPointer),Y
         sta COLUP1
-
         dex
         bne .GameLineLoop
-        
         lda #0
         sta JetAnimationOffset
-        
+
 	lda #2
         sta VBLANK
-        repeat 30
-        	sta WSYNC
-        repend
+        ldx #30
+OverScan:
+	sta WSYNC
+        dex
+        bne OverScan
         lda #0
         sta VBLANK
 CheckP0Up:
@@ -183,8 +186,7 @@ UpdateBomberPosition:
 	dec BomberYPos
         jmp EndPositionUpdate
 .ResetBomberPosition:
-	lda #96
-        sta BomberYPos
+        jsr GetRandomBomberPosition
 EndPositionUpdate:
 
         jmp StartFrame
@@ -202,6 +204,27 @@ SetObjectXPos subroutine
         sta HMP0,Y
         sta RESP0,Y
         rts
+GetRandomBomberPosition subroutine
+        lda Random
+        asl
+        eor Random
+        asl
+        eor Random
+        asl
+        asl
+        eor Random
+        asl
+        rol Random
+        lsr
+        lsr
+        sta BomberXPos
+        lda #30
+        adc BomberXPos
+        sta BomberXPos
+        lda #96
+        sta BomberYPos
+        rts
+        
 JetSprite:
         .byte #%00000000         ;
         .byte #%00010100         ;   # #
