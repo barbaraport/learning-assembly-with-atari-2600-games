@@ -202,6 +202,24 @@ UpdateBomberPosition:
         jsr GetRandomBomberPosition
 EndPositionUpdate:
 
+CheckCollisionP0P1:
+	lda #%10000000
+        bit CXPPMM
+        bne .CollisionP0P1
+        jmp CheckCollisionP0PF
+.CollisionP0P1:
+	jsr GameOver
+CheckCollisionP0PF:
+	lda #%10000000
+        bit CXP0FB
+        bne .CollisionP0PF
+        jmp EndCollisionCheck
+.CollisionP0PF:
+	jsr GameOver
+EndCollisionCheck:
+	sta CXCLR
+        
+        
         jmp StartFrame
 SetObjectXPos subroutine
 	sta WSYNC
@@ -217,6 +235,10 @@ SetObjectXPos subroutine
         sta HMP0,Y
         sta RESP0,Y
         rts
+GameOver subroutine
+	lda #$30
+        sta COLUBK
+	rts
 GetRandomBomberPosition subroutine
         lda Random
         asl
