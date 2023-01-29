@@ -54,6 +54,15 @@ Reset:
         sta BomberColorPointer+1
         
 StartFrame:
+	lda JetXPos
+        ldy #0
+        jsr SetObjectXPos
+        lda BomberXPos
+        ldy #1
+        jsr SetObjectXPos
+        sta WSYNC
+        sta HMOVE
+
 	lda #2
         sta VBLANK
         sta VSYNC
@@ -130,9 +139,42 @@ GameVisibleLines:
         repend
         lda #0
         sta VBLANK
-     
+CheckP0Up:
+	lda #%00010000
+        bit SWCHA
+        bne CheckP0Down
+        inc JetYPos
+CheckP0Down:
+	lda #%00100000
+        bit SWCHA
+        bne CheckP0Left
+        dec JetYPos
+CheckP0Left:
+	lda #%01000000
+        bit SWCHA
+        bne CheckP0Right
+        dec JetXPos
+CheckP0Right:
+	lda #%10000000
+        bit SWCHA
+        bne NoInput
+        inc JetXPos
+NoInput:
         jmp StartFrame
-        
+SetObjectXPos subroutine
+	sta WSYNC
+        sec
+.Div15Loop:
+	sbc #15
+        bcs .Div15Loop
+        eor #7
+        asl
+        asl
+        asl
+        asl
+        sta HMP0,Y
+        sta RESP0,Y
+        rts
 JetSprite:
         .byte #%00000000         ;
         .byte #%00010100         ;   # #
