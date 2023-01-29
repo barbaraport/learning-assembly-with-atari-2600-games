@@ -85,6 +85,19 @@ VBlank:
         dex
         bne VBlank
         sta VBLANK
+ScoreBoardLines:
+	lda #0
+        sta PF0
+        sta PF1
+        sta PF2
+        sta GRP0
+        sta GRP1
+        sta COLUPF
+        ldx #20
+ScoreBoard:
+	sta WSYNC
+        dex
+        bne ScoreBoard
         
 GameVisibleLines:
 	lda #$84
@@ -100,7 +113,7 @@ GameVisibleLines:
         lda #0
         sta PF2
         
-        ldx #96
+        ldx #84
 .GameLineLoop:
 .IsInsideJetSprite:
 	txa
