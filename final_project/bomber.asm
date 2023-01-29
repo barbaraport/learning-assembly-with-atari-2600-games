@@ -14,6 +14,7 @@ JetSpritePointer word
 JetColorPointer word
 BomberSpritePointer word
 BomberColorPointer word
+JetAnimationOffset byte
 
 JET_HEIGHT = 9
 BOMBER_HEIGHT = 9
@@ -106,6 +107,8 @@ GameVisibleLines:
         bcc .DrawSpriteP0
         lda #0
 .DrawSpriteP0:
+	clc
+	adc JetAnimationOffset
 	tay
         lda (JetSpritePointer),Y
         sta WSYNC
@@ -132,6 +135,9 @@ GameVisibleLines:
         dex
         bne .GameLineLoop
         
+        lda #0
+        sta JetAnimationOffset
+        
 	lda #2
         sta VBLANK
         repeat 30
@@ -144,22 +150,43 @@ CheckP0Up:
         bit SWCHA
         bne CheckP0Down
         inc JetYPos
+        lda #0
+        sta JetAnimationOffset
 CheckP0Down:
 	lda #%00100000
         bit SWCHA
         bne CheckP0Left
         dec JetYPos
+        lda #0
+        sta JetAnimationOffset
 CheckP0Left:
 	lda #%01000000
         bit SWCHA
         bne CheckP0Right
         dec JetXPos
+        lda JET_HEIGHT
+        sta JetAnimationOffset
 CheckP0Right:
 	lda #%10000000
         bit SWCHA
         bne NoInput
         inc JetXPos
+        lda JET_HEIGHT
+        sta JetAnimationOffset
 NoInput:
+
+UpdateBomberPosition:
+	lda BomberYPos
+        clc
+        cmp #0
+        bmi .ResetBomberPosition
+	dec BomberYPos
+        jmp EndPositionUpdate
+.ResetBomberPosition:
+	lda #96
+        sta BomberYPos
+EndPositionUpdate:
+
         jmp StartFrame
 SetObjectXPos subroutine
 	sta WSYNC
