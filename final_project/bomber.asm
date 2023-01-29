@@ -10,6 +10,11 @@ JetXPos byte
 JetYPos byte
 BomberXPos byte
 BomberYPos byte
+Score byte
+Timer byte
+Temp byte
+OnesDigitOffset word
+TensDigitOffset word
 JetSpritePointer word
 JetColorPointer word
 BomberSpritePointer word
@@ -19,6 +24,7 @@ Random byte
 
 JET_HEIGHT = 9
 BOMBER_HEIGHT = 9
+DIGITS_HEIGHT = 5
 
 	seg Code
         org $F000
@@ -36,6 +42,9 @@ Reset:
         sta BomberXPos
         lda #%11010100
         sta Random
+        lda #0
+        sta Score
+        sta Timer
         
         lda #<JetSprite
         sta JetSpritePointer
@@ -66,6 +75,8 @@ StartFrame:
         jsr SetObjectXPos
         sta WSYNC
         sta HMOVE
+        
+        jsr CalculateDigitOffset
 
 	lda #2
         sta VBLANK
@@ -92,7 +103,10 @@ ScoreBoardLines:
         sta PF2
         sta GRP0
         sta GRP1
+        lda #$1C
         sta COLUPF
+        lda #%00000000
+        sta CTRLPF
         ldx #20
 ScoreBoard:
 	sta WSYNC
@@ -259,6 +273,124 @@ GetRandomBomberPosition subroutine
         lda #96
         sta BomberYPos
         rts
+CalculateDigitOffset subroutine
+	ldx #1
+.PrepareScoreLoop
+	lda Score,X
+        and #$0F
+        sta Temp
+        asl
+        asl
+        adc Temp
+        sta OnesDigitOffset,X
+        lda Score,X
+        and #$F0
+        lsr
+        lsr
+        sta Temp
+        lsr
+        lsr
+        adc Temp
+        sta TensDigitOffset,X
+	dex
+        bpl .PrepareScoreLoop
+	rts
+Digits:
+	.byte %01110111          ; ### ###
+	.byte %01010101          ; # # # #
+	.byte %01010101          ; # # # #
+	.byte %01010101          ; # # # #
+	.byte %01110111          ; ### ###
+
+	.byte %00010001          ;   #   #
+	.byte %00010001          ;   #   #
+	.byte %00010001          ;   #   #
+	.byte %00010001          ;   #   #
+	.byte %00010001          ;   #   #
+
+	.byte %01110111          ; ### ###
+	.byte %00010001          ;   #   #
+	.byte %01110111          ; ### ###
+	.byte %01000100          ; #   #
+	.byte %01110111          ; ### ###
+
+	.byte %01110111          ; ### ###
+	.byte %00010001          ;   #   #
+	.byte %00110011          ;  ##  ##
+	.byte %00010001          ;   #   #
+	.byte %01110111          ; ### ###
+
+	.byte %01010101          ; # # # #
+	.byte %01010101          ; # # # #
+	.byte %01110111          ; ### ###
+	.byte %00010001          ;   #   #
+	.byte %00010001          ;   #   #
+
+	.byte %01110111          ; ### ###
+	.byte %01000100          ; #   #
+	.byte %01110111          ; ### ###
+	.byte %00010001          ;   #   #
+	.byte %01110111          ; ### ###
+
+	.byte %01110111          ; ### ###
+	.byte %01000100          ; #   #
+	.byte %01110111          ; ### ###
+	.byte %01010101          ; # # # #
+	.byte %01110111          ; ### ###
+
+	.byte %01110111          ; ### ###
+	.byte %00010001          ;   #   #
+	.byte %00010001          ;   #   #
+	.byte %00010001          ;   #   #
+	.byte %00010001          ;   #   #
+
+	.byte %01110111          ; ### ###
+	.byte %01010101          ; # # # #
+	.byte %01110111          ; ### ###
+	.byte %01010101          ; # # # #
+	.byte %01110111          ; ### ###
+
+	.byte %01110111          ; ### ###
+	.byte %01010101          ; # # # #
+	.byte %01110111          ; ### ###
+	.byte %00010001          ;   #   #
+	.byte %01110111          ; ### ###
+
+	.byte %00100010          ;  #   #
+	.byte %01010101          ; # # # #
+	.byte %01110111          ; ### ###
+	.byte %01010101          ; # # # #
+	.byte %01010101          ; # # # #
+
+	.byte %01110111          ; ### ###
+	.byte %01010101          ; # # # #
+	.byte %01100110          ; ##  ##
+	.byte %01010101          ; # # # #
+	.byte %01110111          ; ### ###
+
+	.byte %01110111          ; ### ###
+	.byte %01000100          ; #   #
+	.byte %01000100          ; #   #
+	.byte %01000100          ; #   #
+	.byte %01110111          ; ### ###
+
+	.byte %01100110          ; ##  ##
+	.byte %01010101          ; # # # #
+	.byte %01010101          ; # # # #
+	.byte %01010101          ; # # # #
+	.byte %01100110          ; ##  ##
+
+	.byte %01110111          ; ### ###
+	.byte %01000100          ; #   #
+	.byte %01110111          ; ### ###
+	.byte %01000100          ; #   #
+	.byte %01110111          ; ### ###
+
+	.byte %01110111          ; ### ###
+	.byte %01000100          ; #   #
+	.byte %01100110          ; ##  ##
+	.byte %01000100          ; #   #
+	.byte %01000100          ; #   #
         
 JetSprite:
         .byte #%00000000         ;
