@@ -105,10 +105,10 @@ ScoreBoardLines:
         sta PF2
         sta GRP0
         sta GRP1
-        lda #$1C
-        sta COLUPF
-        lda #%00000000
         sta CTRLPF
+        sta COLUBK
+        lda #$1E
+        sta COLUPF
         ldx #DIGITS_HEIGHT
 .ScoreBoard:
 	ldy TensDigitOffset
@@ -149,6 +149,13 @@ ScoreBoardLines:
         sta PF1
         bne .ScoreBoard
         sta WSYNC
+        lda #0
+        sta PF0
+        sta PF1
+        sta PF2
+        sta WSYNC
+        sta WSYNC
+        sta WSYNC
         
 GameVisibleLines:
 	lda #$84
@@ -164,7 +171,7 @@ GameVisibleLines:
         lda #0
         sta PF2
         
-        ldx #84
+        ldx #85
 .GameLineLoop:
 .IsInsideJetSprite:
 	txa
