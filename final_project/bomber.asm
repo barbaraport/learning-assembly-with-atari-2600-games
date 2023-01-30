@@ -10,6 +10,8 @@ JetXPos byte
 JetYPos byte
 BomberXPos byte
 BomberYPos byte
+MissileXPos byte
+MissileYPos byte
 Score byte
 Timer byte
 Temp byte
@@ -49,6 +51,17 @@ Reset:
         lda #0
         sta Score
         sta Timer
+        
+        MAC DRAW_MISSILE
+        LDA #%00000000
+        	cpx MissileYPos
+                bne .SkipMissileDraw
+.DrawMissile
+	lda #%00000010
+        inc MissileYPos
+.SkipMissileDraw
+	sta ENAM0
+       	ENDM
         
         lda #<JetSprite
         sta JetSpritePointer
@@ -93,6 +106,9 @@ VBlank:
         jsr SetObjectXPos
         lda BomberXPos
         ldy #1
+        jsr SetObjectXPos
+        lda MissileXPos
+        ldy #2
         jsr SetObjectXPos
         jsr CalculateDigitOffset
         sta WSYNC
@@ -175,6 +191,7 @@ GameVisibleLines:
         
         ldx #85
 .GameLineLoop:
+	DRAW_MISSILE
 .IsInsideJetSprite:
 	txa
         sec
@@ -228,6 +245,7 @@ CheckP0Up:
         lda JetYPos
         cmp #70
         bpl CheckP0Down
+.P0UpPressed:
         inc JetYPos
         lda #0
         sta JetAnimationOffset
@@ -238,6 +256,7 @@ CheckP0Down:
         lda JetYPos
         cmp #5
         bmi CheckP0Left
+.P0DownPressed:
         dec JetYPos
         lda #0
         sta JetAnimationOffset
@@ -248,19 +267,34 @@ CheckP0Left:
         lda JetXPos
         cmp #35
         bmi CheckP0Right
+.P0LeftPressed:
         dec JetXPos
         lda JET_HEIGHT
         sta JetAnimationOffset
 CheckP0Right:
 	lda #%10000000
         bit SWCHA
-        bne NoInput
+        bne CheckButtonPressed
         lda JetXPos
         cmp #100
-        bpl NoInput
+        bpl CheckButtonPressed
+.P0RightPressed:
         inc JetXPos
         lda JET_HEIGHT
         sta JetAnimationOffset
+CheckButtonPressed:
+	lda #%10000000
+        bit INPT4
+        bne NoInput
+.ButtonPressed:
+        lda JetXPos
+        clc
+        adc #5
+        sta MissileXPos
+        lda JetYPos
+        clc
+        adc #5
+        sta MissileYPos
 NoInput:
 
 UpdateBomberPosition:
