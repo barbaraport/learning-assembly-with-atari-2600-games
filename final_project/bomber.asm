@@ -21,6 +21,8 @@ BomberSpritePointer word
 BomberColorPointer word
 JetAnimationOffset byte
 Random byte
+ScoreSprite byte
+TimerSprite byte
 
 JET_HEIGHT = 9
 BOMBER_HEIGHT = 9
@@ -66,22 +68,10 @@ Reset:
         lda #>BomberColor
         sta BomberColorPointer+1
         
-StartFrame:
-	lda JetXPos
-        ldy #0
-        jsr SetObjectXPos
-        lda BomberXPos
-        ldy #1
-        jsr SetObjectXPos
-        sta WSYNC
-        sta HMOVE
-        
-        jsr CalculateDigitOffset
-
+StartFrame:    
 	lda #2
         sta VBLANK
         sta VSYNC
-        
         ldx #3
 VSync:
         sta WSYNC
@@ -90,11 +80,23 @@ VSync:
         lda #0
         sta VSYNC
         
-        ldx #37
+        ldx #33
 VBlank:
         sta WSYNC
         dex
         bne VBlank
+        
+	lda JetXPos
+        ldy #0
+        jsr SetObjectXPos
+        lda BomberXPos
+        ldy #1
+        jsr SetObjectXPos
+        jsr CalculateDigitOffset
+        sta WSYNC
+        sta HMOVE
+        
+        lda #0
         sta VBLANK
 ScoreBoardLines:
 	lda #0
@@ -107,11 +109,46 @@ ScoreBoardLines:
         sta COLUPF
         lda #%00000000
         sta CTRLPF
-        ldx #20
-ScoreBoard:
-	sta WSYNC
+        ldx #DIGITS_HEIGHT
+.ScoreBoard:
+	ldy TensDigitOffset
+        lda Digits,Y
+        and #$F0
+        sta ScoreSprite
+        
+        ldy OnesDigitOffset
+        lda Digits,Y
+        and #$0F
+	ora ScoreSprite
+        sta ScoreSprite
+        sta WSYNC
+        sta PF1
+        
+        ldy TensDigitOffset+1
+        lda Digits,Y
+        lda #$F0
+        sta TimerSprite
+        
+        ldy OnesDigitOffset+1
+        lda Digits,Y
+        and #$0F
+        ora TimerSprite
+        sta TimerSprite
+        
+        jsr SleepFor12Cycles
+        sta PF1
+        ldy ScoreSprite
+        sta WSYNC
+        sty PF1
+        inc TensDigitOffset
+        inc TensDigitOffset+1
+        inc OnesDigitOffset
+        inc OnesDigitOffset+1
+        jsr SleepFor12Cycles
         dex
-        bne ScoreBoard
+        sta PF1
+        bne .ScoreBoard
+        sta WSYNC
         
 GameVisibleLines:
 	lda #$84
@@ -294,6 +331,8 @@ CalculateDigitOffset subroutine
         sta TensDigitOffset,X
 	dex
         bpl .PrepareScoreLoop
+	rts
+SleepFor12Cycles subroutine
 	rts
 Digits:
 	.byte %01110111          ; ### ###
