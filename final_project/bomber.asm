@@ -111,6 +111,7 @@ VBlank:
         ldy #2
         jsr SetObjectXPos
         jsr CalculateDigitOffset
+        jsr GenerateJetSound
         sta WSYNC
         sta HMOVE
         
@@ -295,6 +296,7 @@ CheckButtonPressed:
         clc
         adc #5
         sta MissileYPos
+        jsr GenerateMissileSound
 NoInput:
 
 UpdateBomberPosition:
@@ -323,6 +325,7 @@ CheckCollisionP0P1:
         jsr SetTerrainAndRiverColor
         jmp CheckCollisionM0P1
 .P0P1Collided:
+	jsr GenerateExplosionSound
 	jsr GameOver
 CheckCollisionM0P1:
 	lda #%10000000
@@ -341,6 +344,36 @@ CheckCollisionM0P1:
 EndCollisionCheck:
 	sta CXCLR
         jmp StartFrame
+GenerateJetSound subroutine
+	lda #1
+        sta AUDV0
+        lda JetYPos
+        lsr
+        lsr
+        sta Temp
+        lda #31
+        sec
+        sbc Temp
+        sta AUDF0
+        lda #8
+        sta AUDC0
+	rts
+GenerateMissileSound subroutine
+	lda #7
+        sta AUDV0
+        lda #25
+        sta AUDF0
+        lda #6
+        sta AUDC0
+	rts
+GenerateExplosionSound subroutine
+	lda #15
+        sta AUDV0
+        lda #7
+        sta AUDF0
+        lda #9
+        sta AUDC0
+	rts
 SetTerrainAndRiverColor subroutine
 	lda #$C2
         sta TerrainColor
