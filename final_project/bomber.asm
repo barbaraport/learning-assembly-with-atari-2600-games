@@ -23,6 +23,8 @@ JetAnimationOffset byte
 Random byte
 ScoreSprite byte
 TimerSprite byte
+TerrainColor byte
+RiverColor byte
 
 JET_HEIGHT = 9
 BOMBER_HEIGHT = 9
@@ -158,10 +160,10 @@ ScoreBoardLines:
         sta WSYNC
         
 GameVisibleLines:
-	lda #$84
-        sta COLUBK
-        lda #$C2
+	lda TerrainColor
         sta COLUPF
+        lda RiverColor
+        sta COLUBK
         lda #%00000001
         sta CTRLPF
         lda #$F0
@@ -263,22 +265,20 @@ EndPositionUpdate:
 CheckCollisionP0P1:
 	lda #%10000000
         bit CXPPMM
-        bne .CollisionP0P1
-        jmp CheckCollisionP0PF
-.CollisionP0P1:
-	jsr GameOver
-CheckCollisionP0PF:
-	lda #%10000000
-        bit CXP0FB
-        bne .CollisionP0PF
+        bne .P0P1Collided
+        jsr SetTerrainAndRiverColor
         jmp EndCollisionCheck
-.CollisionP0PF:
+.P0P1Collided:
 	jsr GameOver
 EndCollisionCheck:
 	sta CXCLR
-        
-        
         jmp StartFrame
+SetTerrainAndRiverColor subroutine
+	lda #$C2
+        sta TerrainColor
+        lda #$84
+        sta RiverColor
+	rts
 SetObjectXPos subroutine
 	sta WSYNC
         sec
@@ -295,7 +295,11 @@ SetObjectXPos subroutine
         rts
 GameOver subroutine
 	lda #$30
-        sta COLUBK
+        sta TerrainColor
+        sta RiverColor
+        lda #0
+        sta Score
+       	sta Timer
 	rts
 GetRandomBomberPosition subroutine
         lda Random
