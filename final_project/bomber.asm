@@ -260,6 +260,7 @@ UpdateBomberPosition:
         jmp EndPositionUpdate
 .ResetBomberPosition:
         jsr GetRandomBomberPosition
+        inc Score
 EndPositionUpdate:
 
 CheckCollisionP0P1:
@@ -299,7 +300,6 @@ GameOver subroutine
         sta RiverColor
         lda #0
         sta Score
-       	sta Timer
 	rts
 GetRandomBomberPosition subroutine
         lda Random
