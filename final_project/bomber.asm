@@ -272,7 +272,18 @@ UpdateBomberPosition:
         jmp EndPositionUpdate
 .ResetBomberPosition:
         jsr GetRandomBomberPosition
-        inc Score
+.SetScoreValues:
+	sed
+        lda Score
+        clc
+        adc #1
+        sta Score
+        lda Timer
+        clc
+        adc #1
+        sta Timer
+        cld
+        
 EndPositionUpdate:
 
 CheckCollisionP0P1:
