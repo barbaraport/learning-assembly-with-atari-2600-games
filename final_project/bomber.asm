@@ -225,6 +225,9 @@ CheckP0Up:
 	lda #%00010000
         bit SWCHA
         bne CheckP0Down
+        lda JetYPos
+        cmp #70
+        bpl CheckP0Down
         inc JetYPos
         lda #0
         sta JetAnimationOffset
@@ -232,6 +235,9 @@ CheckP0Down:
 	lda #%00100000
         bit SWCHA
         bne CheckP0Left
+        lda JetYPos
+        cmp #5
+        bmi CheckP0Left
         dec JetYPos
         lda #0
         sta JetAnimationOffset
@@ -239,6 +245,9 @@ CheckP0Left:
 	lda #%01000000
         bit SWCHA
         bne CheckP0Right
+        lda JetXPos
+        cmp #35
+        bmi CheckP0Right
         dec JetXPos
         lda JET_HEIGHT
         sta JetAnimationOffset
@@ -246,6 +255,9 @@ CheckP0Right:
 	lda #%10000000
         bit SWCHA
         bne NoInput
+        lda JetXPos
+        cmp #100
+        bpl NoInput
         inc JetXPos
         lda JET_HEIGHT
         sta JetAnimationOffset
