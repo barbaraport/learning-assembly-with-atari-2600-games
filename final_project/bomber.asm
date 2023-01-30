@@ -196,7 +196,7 @@ GameVisibleLines:
 	txa
         sec
         sbc JetYPos
-        cmp JET_HEIGHT
+        cmp #JET_HEIGHT
         bcc .DrawSpriteP0
         lda #0
 .DrawSpriteP0:
@@ -212,7 +212,7 @@ GameVisibleLines:
 	txa
         sec
         sbc BomberYPos
-        cmp BOMBER_HEIGHT
+        cmp #BOMBER_HEIGHT
         bcc .DrawSpriteP1
         lda #0
 .DrawSpriteP1:
@@ -269,7 +269,7 @@ CheckP0Left:
         bmi CheckP0Right
 .P0LeftPressed:
         dec JetXPos
-        lda JET_HEIGHT
+        lda #JET_HEIGHT
         sta JetAnimationOffset
 CheckP0Right:
 	lda #%10000000
@@ -280,7 +280,7 @@ CheckP0Right:
         bpl CheckButtonPressed
 .P0RightPressed:
         inc JetXPos
-        lda JET_HEIGHT
+        lda #JET_HEIGHT
         sta JetAnimationOffset
 CheckButtonPressed:
 	lda #%10000000
