@@ -95,7 +95,7 @@ VSync:
         lda #0
         sta VSYNC
         
-        ldx #33
+        ldx #31
 VBlank:
         sta WSYNC
         dex
@@ -145,7 +145,7 @@ ScoreBoardLines:
         
         ldy TensDigitOffset+1
         lda Digits,Y
-        lda #$F0
+        and #$F0
         sta TimerSprite
         
         ldy OnesDigitOffset+1
