@@ -119,13 +119,13 @@ VBlank:
         sta VBLANK
 ScoreBoardLines:
 	lda #0
+        sta COLUBK
         sta PF0
         sta PF1
         sta PF2
         sta GRP0
         sta GRP1
         sta CTRLPF
-        sta COLUBK
         lda #$1E
         sta COLUPF
         ldx #DIGITS_HEIGHT
